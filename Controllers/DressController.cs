@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using dotnet_rpg.Entities;
 
@@ -12,7 +8,8 @@ namespace dotnet_rpg.Controllers
     public class DressController : ControllerBase
     {
         private static Dress dress = new Dress();
-
-        public IActionResult Get() { return Ok(dress); }
+        
+        [HttpGet]
+        public ActionResult<Dress> Get() { return Ok(dress); }
     }
 }
