@@ -14,9 +14,11 @@ namespace dotnet_rpg.Services.DressService
             new Dress { Id = 1, Name = "dfs" }
         };
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public DressService(IMapper mapper)
+        public DressService(IMapper mapper, DataContext context)
         {
+            _context = context;
             _mapper = mapper;
         }
         
@@ -52,15 +54,16 @@ namespace dotnet_rpg.Services.DressService
         public async Task<ServiceResponse<List<GetDressDto>>> GetAllDresses()
         {
             var serviceResponse = new ServiceResponse<List<GetDressDto>>();
-            serviceResponse.Data = dresses.Select(c => _mapper.Map<GetDressDto>(c)).ToList();
+            var dbDresses = await _context.Dresses.ToListAsync();
+            serviceResponse.Data = dbDresses.Select(c => _mapper.Map<GetDressDto>(c)).ToList();
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetDressDto>> GetDressById(int id)
         {
             var serviceResponse = new ServiceResponse<GetDressDto>();
-            var dress = dresses.FirstOrDefault(c => c.Id == id);
-            serviceResponse.Data = _mapper.Map<GetDressDto>(dress);
+            var dbDress = await _context.Dresses.FirstOrDefaultAsync(c => c.Id == id);
+            serviceResponse.Data = _mapper.Map<GetDressDto>(dbDress);
             return serviceResponse;
         }
 

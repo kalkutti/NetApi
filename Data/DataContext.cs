@@ -12,6 +12,6 @@ namespace dotnet_rpg.Data
         {
             
         }
-        public DbSet<Dress> Dresess => Set<Dress>();
+        public DbSet<Dress> Dresses => Set<Dress>();
     }
 }
