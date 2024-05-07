@@ -9,10 +9,6 @@ namespace dotnet_rpg.Services.DressService
 {
     public class DressService : IDressService
     {
-        private static List<Dress> dresses = new List<Dress> {
-            new Dress(),
-            new Dress { Id = 1, Name = "dfs" }
-        };
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
@@ -39,13 +35,15 @@ namespace dotnet_rpg.Services.DressService
             var serviceResponse = new ServiceResponse<List<GetDressDto>>();
 
             try {
-                var dress = dresses.FirstOrDefault(c => c.Id == id);
+                var dress = await _context.Dresses.FirstOrDefaultAsync(c => c.Id == id);
                 if (dress is null)
                     throw new Exception($"Dress with Id '{id}' not found.");
 
-                dresses.Remove(dress);
+                _context.Dresses.Remove(dress);
+                await _context.SaveChangesAsync();
 
-                serviceResponse.Data = dresses.Select(c => _mapper.Map<GetDressDto>(c)).ToList();
+                serviceResponse.Data = 
+                    await _context.Dresses.Select(c => _mapper.Map<GetDressDto>(c)).ToListAsync();
 
             } catch (Exception ex) 
             {
@@ -76,7 +74,8 @@ namespace dotnet_rpg.Services.DressService
             var serviceResponse = new ServiceResponse<GetDressDto>();
 
             try {
-                var dress = dresses.FirstOrDefault(c => c.Id == updatedDress.Id);
+                var dress = 
+                    await _context.Dresses.FirstOrDefaultAsync(c => c.Id == updatedDress.Id);
                 if (dress is null)
                     throw new Exception($"Dress with Id '{updatedDress.Id}' not found.");
 
@@ -84,6 +83,7 @@ namespace dotnet_rpg.Services.DressService
                 dress.Color = dress.Color;
                 dress.Description = updatedDress.Description;
 
+                await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<GetDressDto>(dress);
 
             } catch (Exception ex) 
