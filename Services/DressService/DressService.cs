@@ -25,8 +25,12 @@ namespace dotnet_rpg.Services.DressService
         public async Task<ServiceResponse<List<GetDressDto>>> AddDress(AddDressDto newDress)
         {
             var serviceResponse = new ServiceResponse<List<GetDressDto>>();
-            dresses.Add(_mapper.Map<Dress>(newDress));
-            serviceResponse.Data = dresses.Select(c => _mapper.Map<GetDressDto>(c)).ToList();
+            var dress = _mapper.Map<Dress>(newDress);
+            _context.Dresses.Add(dress);
+            await _context.SaveChangesAsync();
+
+            serviceResponse.Data = 
+                await _context.Dresses.Select(c => _mapper.Map<GetDressDto>(c)).ToListAsync();
             return serviceResponse;
         }
 
